@@ -12,7 +12,15 @@ const authMiddleware = require("./middleware/authMiddleware");
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// CORS Configuration to allow requests from Netlify frontend
+const corsOptions = {
+  origin: ["https://finance-manager-web.netlify.app"], // Allow only your frontend domain
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Connect to MongoDB
@@ -21,15 +29,16 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
-  console.log("authMiddleware:", typeof authMiddleware);
-  console.log("authMiddleware:", typeof authMiddleware);
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error(" MongoDB Connection Error:", err));
+
+// Debugging Logs
+/*console.log("authMiddleware:", typeof authMiddleware);
 console.log("authRoutes:", typeof authRoutes);
 console.log("expenseRoutes:", typeof expenseRoutes);
 console.log("budgetRoutes:", typeof budgetRoutes);
 console.log("goalRoutes:", typeof goalRoutes);
-console.log("reportRoutes:", typeof reportRoutes);
+console.log("reportRoutes:", typeof reportRoutes);*/
 
 // Routes
 app.use("/api/auth", authRoutes); // Public routes
@@ -38,5 +47,8 @@ app.use("/api/budgets", authMiddleware, budgetRoutes);
 app.use("/api/goals", authMiddleware, goalRoutes);
 app.use("/api/reports", authMiddleware, reportRoutes);
 
+// Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '127.0.0.1',() => console.log(`Server running @ http://127.0.0.1:${PORT}`));
+app.listen(PORT, "0.0.0.0", () =>
+  console.log(` Server running at http://0.0.0.0:${PORT}`)
+);
