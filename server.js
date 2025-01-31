@@ -13,14 +13,11 @@ dotenv.config();
 
 const app = express();
 
-// CORS Configuration to allow requests from Netlify frontend
-const corsOptions = {
-  origin: ["https://finance-manager-web.netlify.app"], // Allow only your frontend domain
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+// Enable CORS for all routes
+app.use(cors({
+  origin: "https://finance-manager-web.netlify.app", // Allow requests from your frontend
+  credentials: true, // Allow cookies and authentication headers
+}));
 app.use(express.json());
 
 // Connect to MongoDB
